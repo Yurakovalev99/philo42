@@ -18,7 +18,7 @@ CFLAGS = -Wall -Werror -Wextra
 
 INC = philo.h
 
-SRC	   =	main.c usage.c\
+SRC	   =	main.c usage.c philo_one.c init.c philo.c
 
 OBJ = $(patsubst %.c,%.o,$(SRC))
 

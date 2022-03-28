@@ -6,7 +6,7 @@
 /*   By: ysachiko <ysachiko@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/20 16:28:16 by ysachiko          #+#    #+#             */
-/*   Updated: 2022/03/20 16:28:33 by ysachiko         ###   ########.fr       */
+/*   Updated: 2022/03/28 14:17:06 by ysachiko         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,4 +38,17 @@ int	ft_atoi(const char *str)
 		i++;
 	}
 	return (j);
+}
+
+void	ft_custom_printf(t_philo *philo, char *s)
+{
+	printf("%lld %d %s\n", philo->time - philo->time_start, philo->num + 1, s);
+}
+
+long long	time_to_ms(struct timeval first)
+{
+	long long	tmp;
+
+	tmp = first.tv_sec * 1000 + first.tv_usec / 1000;
+	return (tmp);
 }
