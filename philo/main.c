@@ -6,7 +6,7 @@
 /*   By: ysachiko <ysachiko@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/20 14:40:26 by ysachiko          #+#    #+#             */
-/*   Updated: 2022/03/28 17:44:43 by ysachiko         ###   ########.fr       */
+/*   Updated: 2022/03/29 16:23:49 by ysachiko         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,6 +55,55 @@ int	ft_check_args(int argc, char **argv)
 	return (0);
 }
 
+// void	*monitor(void *arg)
+// {
+// 	t_philo	*philo;
+// 	long long	ms;
+
+// 	philo = arg;
+// 	while(!philo->info->finish)
+// 	{
+// 		usleep(150);
+// 		pthread_mutex_lock(&philo->check_mutex);
+// 		pthread_mutex_lock(&philo->info->finish_m);
+// 		ms = philo->last_time_eat - philo->last_after_eat;
+// 		if ((ms > philo->info->time_die) && philo->info->finish == 0)
+// 		{
+// 			pthread_mutex_unlock(philo->right_fork_m);
+// 			pthread_mutex_unlock(philo->left_fork_m);
+// 			printf("Philosoph %d is dead :(\n", philo->num + 1);
+// 			pthread_mutex_lock(&philo->info->finish_m);
+// 			philo->info->finish = 1;
+// 			pthread_mutex_unlock(&philo->info->finish_m);
+// 		}
+// 		pthread_mutex_unlock(&philo->info->finish_m);
+// 		pthread_mutex_unlock(&philo->check_mutex);
+// 	}
+// 	return (NULL);
+// }
+
+
+void	create_philo(t_data *data)
+{
+	int			i;
+	// pthread_t	thread;
+
+	i = 0;
+	while (i < data->number)
+	{
+		pthread_create(&data->state[i].thread, NULL, func, (void *)(&data->state[i]));
+		// pthread_create(&thread, NULL, monitor, (void *)(&data->state[i]));
+		// pthread_detach(thread);
+		i++;
+	}
+
+	// if (data->info->number_of_times != 0)
+	// {
+	// 	pthread_create(thread, NULL, monitor_of_eats, (void *)(&data->info));
+	// 	pthread_detach(thread);
+	// }
+}
+
 int	main(int argc, char **argv)
 {
 	t_data			*data;
@@ -65,11 +114,7 @@ int	main(int argc, char **argv)
 		return (0);
 	data = malloc(sizeof(t_data));
 	init_structures(argc, argv, data);
-	while (i < data->number)
-	{
-		pthread_create(&data->state[i].thread, NULL, func, (void *)(&data->state[i]));
-		i++;
-	}
+	create_philo(data);
 	i = 0;
 	while (i < data->number)
 	{
