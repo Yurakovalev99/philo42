@@ -6,7 +6,7 @@
 /*   By: ysachiko <ysachiko@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/28 14:51:58 by ysachiko          #+#    #+#             */
-/*   Updated: 2022/03/29 17:45:03 by ysachiko         ###   ########.fr       */
+/*   Updated: 2022/03/30 18:40:31 by ysachiko         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,34 +43,34 @@ void	init_structures(int argc, char **argv, t_data *data)
 	data->state = malloc(sizeof(t_philo) * data->number + 1);
 	data->forks = malloc(sizeof(pthread_mutex_t) * data->number + 1);
 	data->info = malloc(sizeof(t_info));
-	pthread_mutex_init(&data->info->finish_m, NULL);
 	pthread_mutex_init(&data->info->finish_mutex, NULL);
 	data->info->finish = 0;
+
 	parse(argc, argv, data);
 }
 
 void	philo_fill(t_philo *state, t_data *data)
 {
 	int	i;
-	struct timeval	tv;
+
 
 	i = 0;
 	while (i < data->number)
 		pthread_mutex_init(&data->forks[i++], NULL);
 	i = 0;
-	gettimeofday(&tv, NULL);
+
 	while (i < data->number)
 	{
 		// pthread_mutex_init(&data->forks[i], NULL);
 		pthread_mutex_init(&state[i].check_mutex, NULL);
-		state[i].time_start = tv.tv_sec * 1000 + tv.tv_usec / 1000;
+
 		state[i].left =  (i + 1) % data->number;
 		state[i].right = (i + data->number) % data->number;
 		state[i].num = i;
-		state[i].last_after_eat = state[i].time_start;
+		state[i].finish_total = 0;
+		// state[i].last_after_eat = 0;
 		state[i].left_fork_m = &data->forks[(state[i].left)];
 		state[i].right_fork_m = &data->forks[(state[i].right)];
-		state[i].last_time_eat = state[i].time_start;
 		state[i].info = data->info;
 		state[i].num_of_eats = 0;
 		i++;

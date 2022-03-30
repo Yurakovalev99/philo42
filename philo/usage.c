@@ -6,7 +6,7 @@
 /*   By: ysachiko <ysachiko@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/20 16:28:16 by ysachiko          #+#    #+#             */
-/*   Updated: 2022/03/28 14:17:06 by ysachiko         ###   ########.fr       */
+/*   Updated: 2022/03/30 18:33:43 by ysachiko         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,9 +40,27 @@ int	ft_atoi(const char *str)
 	return (j);
 }
 
+// long long		ms;
+// 	struct timeval	now;
+
+// 	pthread_mutex_lock(&philo->info->finish_mutex);
+// 	gettimeofday(&now, NULL);
+// 	ms = time_to_ms(now) - time_to_ms(philo->info->create_at);
+// 	if (!philo->info->finish)
+// 		printf("%lld\t%d\t %s\n", ms, philo->n + 1, str);
+// 	pthread_mutex_unlock(&philo->info->finish_mutex);
+
 void	ft_custom_printf(t_philo *philo, char *s)
 {
-	printf("%lld %d %s\n", philo->time - philo->time_start, philo->num + 1, s);
+	struct timeval now;
+	long long	ms;
+
+	gettimeofday(&now, NULL);
+	pthread_mutex_lock(&philo->info->finish_mutex);
+	ms = time_to_ms(now) - philo->info->time_start;
+	if (philo->info->finish == 0)
+		printf("%lld %d %s\n", ms, philo->num + 1, s);
+	pthread_mutex_unlock(&philo->info->finish_mutex);
 }
 
 long long	time_to_ms(struct timeval first)

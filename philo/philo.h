@@ -6,7 +6,7 @@
 /*   By: ysachiko <ysachiko@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/20 14:37:56 by ysachiko          #+#    #+#             */
-/*   Updated: 2022/03/29 17:20:35 by ysachiko         ###   ########.fr       */
+/*   Updated: 2022/03/30 18:40:16 by ysachiko         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,14 +27,14 @@ typedef struct s_info
 	pthread_mutex_t	finish_mutex;
 	int				finish;
 	int				number_of_times;
-	// int				*array_of_times;
-	pthread_mutex_t	finish_m;
+	long long		time_start;
 }	t_info;
 
 typedef struct s_philo
 {
 	int				num;
 	int				num_of_eats;
+	int				finish_total;
 	int				left;
 	int				right;
 	pthread_t		thread;
@@ -43,9 +43,6 @@ typedef struct s_philo
 	pthread_mutex_t	check_mutex;
 	t_info			*info;
 	long long		last_time_eat;
-	long long		time;
-	long long		time_start;
-	long long		last_after_eat;
 }	t_philo;
 
 typedef struct s_data
@@ -57,7 +54,7 @@ typedef struct s_data
 }	t_data;
 
 int			ft_atoi(const char *str);
-void		ft_sleep(long long	time);
+void		ft_sleep(long long	time, t_philo *philo);
 void		ft_custom_printf(t_philo *philo, char *s);
 long long	time_to_ms(struct timeval first);
 void		take_forks(t_philo *philo);

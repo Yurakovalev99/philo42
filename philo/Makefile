@@ -25,13 +25,18 @@ OBJ = $(patsubst %.c,%.o,$(SRC))
 all : $(NAME)
 
 $(NAME) : $(OBJ)
+	@echo "\033[0;32m\n\nCompiling philosophers..."
 	@$(CC) $(CFLAGS) $(OBJ) -o $(NAME)
+	@echo "\n\033[0;32mDone."
 
 %.o : %.c $(INC)
+	@printf "\033[0;33mGenerating philosophers objects... %-10.10s\r" $@
 	gcc $(CFLAGS) -c $< -o $@
 
 clean :
+	@echo "\033[0;31m\nDeleting objects..."
 	rm -f $(OBJ)
+	@echo "\n\033[0;31mDeleted.\n"
 
 fclean : clean
 	rm -f $(NAME)

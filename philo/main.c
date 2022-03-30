@@ -6,7 +6,7 @@
 /*   By: ysachiko <ysachiko@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/20 14:40:26 by ysachiko          #+#    #+#             */
-/*   Updated: 2022/03/29 16:23:49 by ysachiko         ###   ########.fr       */
+/*   Updated: 2022/03/30 19:03:14 by ysachiko         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,6 +17,8 @@ void	destroy_mutex(t_data *data)
 	int	i;
 
 	i = 0;
+	pthread_mutex_destroy(&data->info->finish_mutex);
+	pthread_mutex_destroy(&data->info->finish_mutex);
 	while (i < data->number)
 	{
 		pthread_mutex_destroy(&data->forks[i]);
@@ -55,45 +57,50 @@ int	ft_check_args(int argc, char **argv)
 	return (0);
 }
 
-// void	*monitor(void *arg)
-// {
-// 	t_philo	*philo;
-// 	long long	ms;
+void	*monitor(void *arg)
+{
+	t_philo	*philo;
+	long long	ms;
+	struct timeval now;
 
-// 	philo = arg;
-// 	while(!philo->info->finish)
-// 	{
-// 		usleep(150);
-// 		pthread_mutex_lock(&philo->check_mutex);
-// 		pthread_mutex_lock(&philo->info->finish_m);
-// 		ms = philo->last_time_eat - philo->last_after_eat;
-// 		if ((ms > philo->info->time_die) && philo->info->finish == 0)
-// 		{
-// 			pthread_mutex_unlock(philo->right_fork_m);
-// 			pthread_mutex_unlock(philo->left_fork_m);
-// 			printf("Philosoph %d is dead :(\n", philo->num + 1);
-// 			pthread_mutex_lock(&philo->info->finish_m);
-// 			philo->info->finish = 1;
-// 			pthread_mutex_unlock(&philo->info->finish_m);
-// 		}
-// 		pthread_mutex_unlock(&philo->info->finish_m);
-// 		pthread_mutex_unlock(&philo->check_mutex);
-// 	}
-// 	return (NULL);
-// }
+	philo = arg;
+	while(!philo->info->finish)
+	{
+		usleep(100);
+		pthread_mutex_lock(&philo->check_mutex);
+		pthread_mutex_lock(&philo->info->finish_mutex);
+		gettimeofday(&now, NULL);
+		ms = time_to_ms(now) - philo->last_time_eat; // 1
+		gettimeofday(&now, NULL);
+		if (ms >= philo->info->time_die && philo->info->finish == 0)
+		{
+			pthread_mutex_unlock(philo->right_fork_m);
+			pthread_mutex_unlock(philo->left_fork_m);
+			printf("%lld %d %s\n", ms, philo->num + 1, "died");
+			philo->info->finish = 1;
+		}
+		pthread_mutex_unlock(&philo->info->finish_mutex);
+		pthread_mutex_unlock(&philo->check_mutex);
+	}
+	return(NULL);
+}
 
 
 void	create_philo(t_data *data)
 {
 	int			i;
-	// pthread_t	thread;
+	struct timeval	tv;
+	pthread_t	thread;
 
 	i = 0;
+	gettimeofday(&tv, NULL);
+	data->info->time_start = tv.tv_sec * 1000 + tv.tv_usec / 1000;
 	while (i < data->number)
 	{
+		data->state[i].last_time_eat = data->info->time_start;
 		pthread_create(&data->state[i].thread, NULL, func, (void *)(&data->state[i]));
-		// pthread_create(&thread, NULL, monitor, (void *)(&data->state[i]));
-		// pthread_detach(thread);
+		pthread_create(&thread, NULL, monitor, (void *)(&data->state[i]));
+		pthread_detach(thread);
 		i++;
 	}
 
@@ -119,6 +126,7 @@ int	main(int argc, char **argv)
 	while (i < data->number)
 	{
 		pthread_join(data->state[i].thread, NULL);
+		pthread_mutex_destroy(&data->state[i++].check_mutex);
 		i++;
 	}
 
