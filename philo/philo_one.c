@@ -6,7 +6,7 @@
 /*   By: ysachiko <ysachiko@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/20 18:24:29 by ysachiko          #+#    #+#             */
-/*   Updated: 2022/03/30 19:03:04 by ysachiko         ###   ########.fr       */
+/*   Updated: 2022/04/02 18:21:49 by ysachiko         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,19 +20,27 @@ long long	timestamp(void)
 	return (t.tv_sec * 1000 + t.tv_usec / 1000);
 }
 
-void	ft_sleep(long long time, t_philo *philo)
+int	ft_sleep(long long time, t_philo *philo)
 {
 	long long	i;
+	int			local;
 
 	i = philo->num;
 	i = timestamp();
 
-	// pthread_mutex_lock(&philo->check_mutex);
-	while (!philo->info->finish)
+	pthread_mutex_lock(&philo->info->finish_mutex);
+	if (philo->info->finish)
+	{
+		pthread_mutex_unlock(&philo->info->finish_mutex);
+		return (1);
+	}
+	local = philo->info->finish;
+	pthread_mutex_unlock(&philo->info->finish_mutex);
+	while (!local)
 	{
 		if (timestamp() - i >= time)
 			break ;
 		usleep(50);
 	}
-	// pthread_mutex_unlock(&philo->check_mutex);
+	return	(0);
 }

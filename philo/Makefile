@@ -25,12 +25,12 @@ OBJ = $(patsubst %.c,%.o,$(SRC))
 all : $(NAME)
 
 $(NAME) : $(OBJ)
-	@echo "\033[0;32m\n\nCompiling philosophers..."
+	@echo "\033[0;33m\n\nCompiling philosophers..."
 	@$(CC) $(CFLAGS) $(OBJ) -o $(NAME)
-	@echo "\n\033[0;32mDone."
+	@echo "\n\033[0;36mDone."
 
 %.o : %.c $(INC)
-	@printf "\033[0;33mGenerating philosophers objects... %-10.10s\r" $@
+	@printf "\033[0;34mGenerating philosophers objects... %-10.10s\r" $@
 	gcc $(CFLAGS) -c $< -o $@
 
 clean :

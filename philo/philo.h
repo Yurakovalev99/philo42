@@ -6,7 +6,7 @@
 /*   By: ysachiko <ysachiko@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/20 14:37:56 by ysachiko          #+#    #+#             */
-/*   Updated: 2022/03/30 18:40:16 by ysachiko         ###   ########.fr       */
+/*   Updated: 2022/04/02 17:33:27 by ysachiko         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,13 +54,13 @@ typedef struct s_data
 }	t_data;
 
 int			ft_atoi(const char *str);
-void		ft_sleep(long long	time, t_philo *philo);
-void		ft_custom_printf(t_philo *philo, char *s);
+int			ft_sleep(long long	time, t_philo *philo);
+int			ft_custom_printf(t_philo *philo, char *s);
 long long	time_to_ms(struct timeval first);
-void		take_forks(t_philo *philo);
-void		eating(t_philo *philo);
-void		thinking(t_philo *philo);
-void		sleeping(t_philo *philo);
+int			take_forks(t_philo *philo);
+int			eating(t_philo *philo);
+int			thinking(t_philo *philo);
+int			sleeping(t_philo *philo);
 void		*func(void *arg);
 
 void		init_structures(int argc, char **argv, t_data *data);

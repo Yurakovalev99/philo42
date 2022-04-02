@@ -6,7 +6,7 @@
 /*   By: ysachiko <ysachiko@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/20 14:40:26 by ysachiko          #+#    #+#             */
-/*   Updated: 2022/03/30 19:03:14 by ysachiko         ###   ########.fr       */
+/*   Updated: 2022/04/02 18:54:36 by ysachiko         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,6 @@ void	destroy_mutex(t_data *data)
 	int	i;
 
 	i = 0;
-	pthread_mutex_destroy(&data->info->finish_mutex);
 	pthread_mutex_destroy(&data->info->finish_mutex);
 	while (i < data->number)
 	{
@@ -64,25 +63,35 @@ void	*monitor(void *arg)
 	struct timeval now;
 
 	philo = arg;
-	while(!philo->info->finish)
+	while(1)
 	{
-		usleep(100);
+		usleep(1100);
 		pthread_mutex_lock(&philo->check_mutex);
 		pthread_mutex_lock(&philo->info->finish_mutex);
+		// printf("%d\n", philo->num);
+		if (philo->info->finish)
+		{
+			pthread_mutex_unlock(&philo->info->finish_mutex);
+			pthread_mutex_unlock(&philo->check_mutex);
+			return ((void*)0);
+		}
 		gettimeofday(&now, NULL);
 		ms = time_to_ms(now) - philo->last_time_eat; // 1
 		gettimeofday(&now, NULL);
 		if (ms >= philo->info->time_die && philo->info->finish == 0)
 		{
+			philo->info->finish = 1;
 			pthread_mutex_unlock(philo->right_fork_m);
 			pthread_mutex_unlock(philo->left_fork_m);
 			printf("%lld %d %s\n", ms, philo->num + 1, "died");
-			philo->info->finish = 1;
+			pthread_mutex_unlock(&philo->info->finish_mutex);
+			pthread_mutex_unlock(&philo->check_mutex);
+			// pthread_mutex_destroy(&philo->info->finish_mutex);
+			return ((void*)0);
 		}
 		pthread_mutex_unlock(&philo->info->finish_mutex);
 		pthread_mutex_unlock(&philo->check_mutex);
 	}
-	return(NULL);
 }
 
 
@@ -126,7 +135,7 @@ int	main(int argc, char **argv)
 	while (i < data->number)
 	{
 		pthread_join(data->state[i].thread, NULL);
-		pthread_mutex_destroy(&data->state[i++].check_mutex);
+		// pthread_mutex_destroy(&data->state[i++].check_mutex);
 		i++;
 	}
 
