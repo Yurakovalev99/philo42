@@ -5,74 +5,77 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: ysachiko <ysachiko@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2022/03/28 14:51:58 by ysachiko          #+#    #+#             */
-/*   Updated: 2022/03/30 18:40:31 by ysachiko         ###   ########.fr       */
+/*   Created: 2022/04/16 13:02:19 by chorse            #+#    #+#             */
+/*   Updated: 2022/04/19 15:25:30 by ysachiko         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
 
-void	parse(int argc, char **argv, t_data *data)
-{
-	int	i;
-
-	i = 1;
-	data->info->number_of_times = -1;
-	while (i < argc)
-	{
-		if (i == 1)
-			data->number = ft_atoi(argv[i]);
-		if (i == 2)
-			data->info->time_die = ft_atoi(argv[i]);
-		if (i == 3)
-			data->info->time_eat = ft_atoi(argv[i]);
-		if (i == 4)
-			data->info->time_sleep = ft_atoi(argv[i]);
-		if (i == 5)
-			data->info->number_of_times = ft_atoi(argv[i]);
-		i++;
-	}
-	philo_fill(data->state, data);
-}
-
-void	init_structures(int argc, char **argv, t_data *data)
+int	ft_init_data(int argc, char **argv, t_data *data)
 {
 	int	i;
 
 	i = 0;
-	data->state = malloc(sizeof(t_philo) * data->number + 1);
-	data->forks = malloc(sizeof(pthread_mutex_t) * data->number + 1);
-	data->info = malloc(sizeof(t_info));
-	pthread_mutex_init(&data->info->finish_mutex, NULL);
-	data->info->finish = 0;
-
-	parse(argc, argv, data);
-}
-
-void	philo_fill(t_philo *state, t_data *data)
-{
-	int	i;
-
-
-	i = 0;
-	while (i < data->number)
-		pthread_mutex_init(&data->forks[i++], NULL);
-	i = 0;
-
+	if (argc != 5 && argc != 6)
+		return (1);
+	data->number = ft_atoi(argv[1]);
+	data->philo = malloc(sizeof(t_philo) * data->number);
+	if (!data->philo)
+		return (1);
+	if (argc == 6)
+		data->number_of_times = ft_atoi(argv[5]);
+	else
+		data->number_of_times = -1;
+	if (ft_init_mut(data))
+		return (1);
 	while (i < data->number)
 	{
-		// pthread_mutex_init(&data->forks[i], NULL);
-		pthread_mutex_init(&state[i].check_mutex, NULL);
-
-		state[i].left =  (i + 1) % data->number;
-		state[i].right = (i + data->number) % data->number;
-		state[i].num = i;
-		state[i].finish_total = 0;
-		// state[i].last_after_eat = 0;
-		state[i].left_fork_m = &data->forks[(state[i].left)];
-		state[i].right_fork_m = &data->forks[(state[i].right)];
-		state[i].info = data->info;
-		state[i].num_of_eats = 0;
+		ft_init_philo(&data->philo[i], data, argv, i);
 		i++;
 	}
+	data->thread = malloc(sizeof(pthread_t) * data->number);
+	if (!data->thread)
+		return (1);
+	return (0);
+}
+
+int	ft_init_mut(t_data *data)
+{
+	int	i;
+
+	i = 0;
+	data->forks = malloc(sizeof(pthread_mutex_t) * data->number);
+	if (!data->forks)
+		return (1);
+	data->print = malloc(sizeof(pthread_mutex_t));
+	if (!data->print)
+		return (1);
+	data->time = malloc(sizeof(pthread_mutex_t));
+	if (!data->time)
+		return (1);
+	while (i < data->number)
+	{
+		pthread_mutex_init(&data->forks[i], NULL);
+		i++;
+	}
+	pthread_mutex_init(data->print, NULL);
+	pthread_mutex_init(data->time, NULL);
+	return (0);
+}
+
+void	ft_init_philo(t_philo *philo, t_data *data, char **argv, int i)
+{
+	pthread_mutex_init(&philo->num_times, NULL);
+	philo->time_die = ft_atoi(argv[2]);
+	philo->time_eat = ft_atoi(argv[3]);
+	philo->time_sleep = ft_atoi(argv[4]);
+	philo->number_of_times = data->number_of_times;
+	philo->num = data->number;
+	philo->last_time_eat = 0;
+	philo->print = data->print;
+	philo->id = i + 1;
+	philo->time = data->time;
+	philo->left_fork_m = &data->forks[i];
+	philo->right_fork_m = &data->forks[(i + 1) % data->number];
 }

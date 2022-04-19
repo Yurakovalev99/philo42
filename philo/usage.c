@@ -3,14 +3,22 @@
 /*                                                        :::      ::::::::   */
 /*   usage.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ysachiko <ysachiko@student.42.fr>          +#+  +:+       +#+        */
+/*   By: chorse <chorse@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2022/03/20 16:28:16 by ysachiko          #+#    #+#             */
-/*   Updated: 2022/04/02 18:22:25 by ysachiko         ###   ########.fr       */
+/*   Created: 2022/04/16 13:26:54 by chorse            #+#    #+#             */
+/*   Updated: 2022/04/16 14:20:08 by chorse           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
+
+long long	timestamp(void)
+{
+	struct timeval	t;
+
+	gettimeofday(&t, NULL);
+	return (t.tv_sec * 1000 + t.tv_usec / 1000);
+}
 
 int	ft_atoi(const char *str)
 {
@@ -40,38 +48,16 @@ int	ft_atoi(const char *str)
 	return (j);
 }
 
-// long long		ms;
-// 	struct timeval	now;
-
-// 	pthread_mutex_lock(&philo->info->finish_mutex);
-// 	gettimeofday(&now, NULL);
-// 	ms = time_to_ms(now) - time_to_ms(philo->info->create_at);
-// 	if (!philo->info->finish)
-// 		printf("%lld\t%d\t %s\n", ms, philo->n + 1, str);
-// 	pthread_mutex_unlock(&philo->info->finish_mutex);
-
-int	ft_custom_printf(t_philo *philo, char *s)
+void	ft_sleep(long long time)
 {
-	struct timeval now;
-	long long	ms;
+	long long	i;
 
-	gettimeofday(&now, NULL);
-	pthread_mutex_lock(&philo->info->finish_mutex);
-	ms = time_to_ms(now) - philo->info->time_start;
-	if (!philo->info->finish)
+	i = timestamp();
+	while (1)
 	{
-		printf("%lld %d %s\n", ms, philo->num + 1, s);
-		pthread_mutex_unlock(&philo->info->finish_mutex);
-		return (0);
+		if (timestamp() - i >= time)
+			break ;
+		usleep(50);
 	}
-	pthread_mutex_unlock(&philo->info->finish_mutex);
-	return (1);
 }
 
-long long	time_to_ms(struct timeval first)
-{
-	long long	tmp;
-
-	tmp = first.tv_sec * 1000 + first.tv_usec / 1000;
-	return (tmp);
-}
