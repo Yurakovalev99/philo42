@@ -6,7 +6,7 @@
 /*   By: ysachiko <ysachiko@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/17 15:32:39 by chorse            #+#    #+#             */
-/*   Updated: 2022/04/23 15:16:58 by ysachiko         ###   ########.fr       */
+/*   Updated: 2022/04/25 18:02:59 by ysachiko         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,11 +25,55 @@ void	ft_sit(t_data *data)
 	}
 }
 
+void	exit_all(t_data *data)
+{
+	int	i;
+
+	i = 0;
+	sem_close(data->print);
+	sem_close(data->general);
+	kill(0, SIGKILL);
+}
+
+void	*moni(void *arg)
+{
+	t_data *data;
+
+	data = arg;
+	usleep(1000);
+	while (1)
+	{
+		if (ft_time() - data->last_meal > data->die_time)
+		{
+			printf("\n\n%lld %lld %lld %lld %d",ft_time(), data->last_meal, ft_time() - data->zero_time, data->zero_time, data->die_time);
+			printf("CHECK\n\n\n");
+			// exit_all(data);
+			break ;
+		}
+	}
+	return (NULL);
+}
+
+void	monitoring(t_data *data)
+{
+	pthread_t	monitoring;
+
+	pthread_create(&monitoring, NULL, moni, &data);
+	pthread_detach(monitoring);
+}
+
+void	update_time(t_data *data)
+{
+	data->zero_time = ft_time();
+	data->last_meal = data->zero_time;
+}
+
 void initProcess(t_data *data)
 {
 	pid_t pid;
 
 	data->id = 0;
+	update_time(data);
 	while (data->id < data->number)
 	{
 		pid = fork();
@@ -40,10 +84,12 @@ void initProcess(t_data *data)
 		}
 		if (pid == 0)
 		{
-			printf("SUCCES\n");
+			update_time(data);
 			ft_sit(data);
+			update_time(data);
+			monitoring(data);
 			ft_action(data);
-			break;
+			// break;
 		}
 		data->children_pids[data->id] = pid;
 		data->id++;

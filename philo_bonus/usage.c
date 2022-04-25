@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   usage.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: chorse <chorse@student.42.fr>              +#+  +:+       +#+        */
+/*   By: ysachiko <ysachiko@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/16 13:26:54 by chorse            #+#    #+#             */
-/*   Updated: 2022/04/23 13:56:39 by chorse           ###   ########.fr       */
+/*   Updated: 2022/04/25 17:46:45 by ysachiko         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,12 +64,30 @@ void	ft_sleep(long long msec)
 	}
 }
 
-long	ft_time(void)
+long long	ft_time(void)
 {
 	struct timeval	tv;
-	long			res;
+	long long			res;
 
 	gettimeofday(&tv, NULL);
-	res = (long)tv.tv_sec * 1000 + (long)(tv.tv_usec / 1000);
+	res = (long)(tv.tv_sec * 1000) + (long)(tv.tv_usec / 1000);
 	return (res);
+}
+
+void	ft_print_msg(t_data *data, char msg)
+{
+	sem_wait(data->print);
+	if (msg == 's')
+		printf("%lld %d is sleeping\n", \
+			ft_time() - data->zero_time, data->id + 1);
+	else if (msg == 'e')
+		printf("%lld %d is eating\n", \
+			ft_time() - data->zero_time, data->id + 1);
+	else if (msg == 'f')
+		printf("%lld %d has taken a fork\n", \
+			ft_time() - data->zero_time, data->id + 1);
+	else if (msg == 't')
+		printf("%lld %d is thinking\n", \
+			ft_time() - data->zero_time, data->id + 1);
+	sem_post(data->print);
 }
