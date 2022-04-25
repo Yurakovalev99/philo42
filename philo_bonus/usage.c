@@ -5,8 +5,8 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: ysachiko <ysachiko@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2022/04/16 13:26:54 by chorse            #+#    #+#             */
-/*   Updated: 2022/04/25 17:46:45 by ysachiko         ###   ########.fr       */
+/*   Created: 2022/04/25 19:23:11 by ysachiko          #+#    #+#             */
+/*   Updated: 2022/04/25 19:23:13 by ysachiko         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,7 +40,6 @@ int	ft_atoi(const char *str)
 	return (j);
 }
 
-
 void	ft_sleep(long long msec)
 {
 	struct timeval				cur_time;
@@ -67,7 +66,7 @@ void	ft_sleep(long long msec)
 long long	ft_time(void)
 {
 	struct timeval	tv;
-	long long			res;
+	long long		res;
 
 	gettimeofday(&tv, NULL);
 	res = (long)(tv.tv_sec * 1000) + (long)(tv.tv_usec / 1000);

@@ -5,8 +5,8 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: ysachiko <ysachiko@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2022/04/16 13:02:19 by chorse            #+#    #+#             */
-/*   Updated: 2022/04/25 17:16:41 by ysachiko         ###   ########.fr       */
+/*   Created: 2022/04/25 19:22:50 by ysachiko          #+#    #+#             */
+/*   Updated: 2022/04/25 19:22:53 by ysachiko         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,8 +20,8 @@ int	ft_init_data(int argc, char **argv, t_data *data)
 	if (argc != 5 && argc != 6)
 		return (1);
 	data->number = ft_atoi(argv[1]);
-	if (data->number <= 0 || (argv[5] && ft_atoi(argv[5]) <= 0) || ft_atoi(argv[4]) <= 0 \
-		|| ft_atoi(argv[3]) <= 0 || ft_atoi(argv[2]) <= 0)
+	if (data->number <= 0 || (argv[5] && ft_atoi(argv[5]) <= 0) || \
+		ft_atoi(argv[4]) <= 0 || ft_atoi(argv[3]) <= 0 || ft_atoi(argv[2]) <= 0)
 		return (1);
 	if (argc == 6)
 		data->eat = ft_atoi(argv[5]);
@@ -66,9 +66,10 @@ int	ft_init_philo(char **argv, t_data *data)
 	data->die_time = ft_atoi(argv[2]);
 	data->eat_time = ft_atoi(argv[3]);
 	data->sleep_time = ft_atoi(argv[4]);
-	data->last_meal = 0;
 	data->zero_time = ft_time();
+	data->last_meal = data->zero_time;
 	data->children_pids = malloc(sizeof(int) * data->number);
+	update_time(data);
 	return (0);
 }
 

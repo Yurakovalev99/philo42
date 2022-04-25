@@ -6,7 +6,7 @@
 #    By: ysachiko <ysachiko@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2022/04/23 13:47:56 by ysachiko          #+#    #+#              #
-#    Updated: 2022/04/25 16:10:35 by ysachiko         ###   ########.fr        #
+#    Updated: 2022/04/25 18:31:41 by ysachiko         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -18,7 +18,7 @@ CFLAGS = -Wall -Werror -Wextra -fsanitize=address -pthread
 
 INC = philo_bonus.h
 
-SRC	   = main.c init.c usage.c action.c\
+SRC	   = main.c init.c usage.c action.c monitoring.c\
 
 OBJ = $(patsubst %.c,%.o,$(SRC))
 

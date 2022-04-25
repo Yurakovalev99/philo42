@@ -5,61 +5,23 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: ysachiko <ysachiko@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2022/04/17 15:32:39 by chorse            #+#    #+#             */
-/*   Updated: 2022/04/25 18:02:59 by ysachiko         ###   ########.fr       */
+/*   Created: 2022/04/25 19:22:58 by ysachiko          #+#    #+#             */
+/*   Updated: 2022/04/25 19:23:01 by ysachiko         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo_bonus.h"
 
-
 void	ft_sit(t_data *data)
 {
-	long long curTime;
+	long long	cur_time;
 
-	curTime = ft_time();
-	while (curTime < data->zero_time + 200)
+	cur_time = ft_time();
+	while (cur_time < data->zero_time + 200)
 	{
 		usleep(10);
-		curTime = ft_time();
+		cur_time = ft_time();
 	}
-}
-
-void	exit_all(t_data *data)
-{
-	int	i;
-
-	i = 0;
-	sem_close(data->print);
-	sem_close(data->general);
-	kill(0, SIGKILL);
-}
-
-void	*moni(void *arg)
-{
-	t_data *data;
-
-	data = arg;
-	usleep(1000);
-	while (1)
-	{
-		if (ft_time() - data->last_meal > data->die_time)
-		{
-			printf("\n\n%lld %lld %lld %lld %d",ft_time(), data->last_meal, ft_time() - data->zero_time, data->zero_time, data->die_time);
-			printf("CHECK\n\n\n");
-			// exit_all(data);
-			break ;
-		}
-	}
-	return (NULL);
-}
-
-void	monitoring(t_data *data)
-{
-	pthread_t	monitoring;
-
-	pthread_create(&monitoring, NULL, moni, &data);
-	pthread_detach(monitoring);
 }
 
 void	update_time(t_data *data)
@@ -68,9 +30,9 @@ void	update_time(t_data *data)
 	data->last_meal = data->zero_time;
 }
 
-void initProcess(t_data *data)
+void	init_process(t_data *data)
 {
-	pid_t pid;
+	pid_t	pid;
 
 	data->id = 0;
 	update_time(data);
@@ -84,12 +46,11 @@ void initProcess(t_data *data)
 		}
 		if (pid == 0)
 		{
-			update_time(data);
 			ft_sit(data);
 			update_time(data);
 			monitoring(data);
+			update_time(data);
 			ft_action(data);
-			// break;
 		}
 		data->children_pids[data->id] = pid;
 		data->id++;
@@ -99,11 +60,9 @@ void initProcess(t_data *data)
 int	main(int argc, char **argv)
 {
 	t_data	data;
-	int				i;
-	// pthread_t		monitoring;
+	int		i;
 
 	i = 0;
-	// monitoring = NULL;
 	if (ft_init_data(argc, argv, &data))
 	{
 		write(2, "invalid value\n", 15);
@@ -114,12 +73,7 @@ int	main(int argc, char **argv)
 		write(2, "invalid value\n", 15);
 		return (1);
 	}
-	initProcess(&data);
+	init_process(&data);
 	sleep(1000);
 	return (0);
-	// for (int i = 0; i < 5; i++) {
-	// 	printf("pid = %d \n", data->children_pids[i]);
-	// }
-	// free(data->children_pids);
-	// free(data);
 }
